@@ -15,8 +15,11 @@ import pyperclip
 import openpyxl
 import requests
 
+
+
 browser_path = "https://gbehcm.eduro.go.kr/"
 
+# 맥 환경에서 복사 -> 붙여넣기
 def paste():
     pyautogui.keyDown('command')
     pyautogui.press('v')
@@ -29,6 +32,9 @@ chrome_options.add_experimental_option("detach", True)
 # 불필요한 에러 메세지 없애기
 chrome_options.add_experimental_option("excludeSwitches", ['enable-logging'])
 
+# 백그라운드 실행 옵션
+#chrome_options.add_argument("headless")
+
 service = Service(executable_path=ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
@@ -37,25 +43,30 @@ driver.implicitly_wait(5) # 웹페이지가 로딩될 때까지 5초는 기다�
 driver.maximize_window() # 화면 최대화
 driver.get(browser_path)
 
-# 아이디 입력창
-id = driver.find_element(By.CSS_SELECTOR, "#lusername") # 태그 자동으로 선택
-id.click()
-pyperclip.copy("eksajrm0624")
-paste()
-time.sleep(1)
 
-# 비밀번호 입력창
-pw = driver.find_element(By.CSS_SELECTOR, "#lpassword") # 태그 자동으로 선택
-pw.click()
-pyperclip.copy("Dltkdals1!")
-paste()
-time.sleep(1)
+def Login():
+    # 아이디 입력창
+    driver.find_element(By.CSS_SELECTOR, "#lusername").send_keys('eksajrm0624')
 
-# 로그인 버튼
-login_btn = driver.find_element(By.CSS_SELECTOR, "body > div > div.login > form > div > button")
-login_btn.click()
-time.sleep(1)
+    # id = driver.find_element(By.CSS_SELECTOR, "#lusername") # 태그 자동으로 선택
+    # id.click()
+    # pyperclip.copy("eksajrm0624")
+    # paste()
+    # time.sleep(1)
 
+    # 비밀번호 입력창
+    pw = driver.find_element(By.CSS_SELECTOR, "#lpassword") # 태그 자동으로 선택
+    pw.click()
+    pyperclip.copy("Dltkdals1!")
+    paste()
+    time.sleep(1)
+
+    # 로그인 버튼
+    login_btn = driver.find_element(By.CSS_SELECTOR, "body > div > div.login > form > div > button")
+    login_btn.click()
+    time.sleep(1)
+
+Login()
 
 ######### 사이트 접속 이후 #########
 
@@ -67,14 +78,15 @@ Search_btn = driver.find_element(By.CSS_SELECTOR, "#searchForm > ul > li.group.g
 Search_btn.click()
 
 # 데이터 집계
-response = get(current_url = driver.current_url)
+current_url = driver.current_url
+response = get(current_url)
+print(current_url)
 print(response)
 if response.status_code != 200 :
     print("Can`t request website")
 else :
+    print("Yes!")
     soup = BeautifulSoup(response.text, "html.parser")
     print(soup.find_all("p"))
 
-
-
-
+quit()
